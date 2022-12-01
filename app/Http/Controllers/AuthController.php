@@ -12,13 +12,13 @@ class AuthController extends Controller
 {
    public function viewlogin()
    {
-        // dd('tekan');
         return view('layouts.auth.login');
    }
    
    public function loginaction(Request $request)
     {
-        dd($request);
+        // dd($request);
+        
         $request->validate([
             'email' => 'required',
             'password' => 'required'

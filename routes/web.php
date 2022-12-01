@@ -17,16 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // return view('dashboard');
-    return view('layouts.auth.login');
+    return redirect()->route('view_login');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::post('/login', [AuthController::class, 'loginaction'])->name('login');
-    Route::post('/register', [AuthController::class, 'registeraction'])->name('register');
-
-    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/viewlogin', [AuthController::class, 'viewlogin'])->name('view_login');
+ 	Route::post('/login', [AuthController::class, 'loginaction'])->name('login');
+    Route::post('/register', [AuthController::class, 'registeraction'])->name('register');
     Route::get('/viewreg', [AuthController::class, 'viewregister'])->name('view_register');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
