@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserAccess;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,5 +28,11 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+    Route::get('/useraccess', [UserAccess::class, 'index'])->name('useraccess');
+    Route::get('/datatableuser', [UserAccess::class, 'create'])->name('datatableuser');
+    Route::post('/edituser', [UserAccess::class, 'edit'])->name('edituser');
+    Route::post('/updateuser', [UserAccess::class, 'update'])->name('updateuser');   
+    Route::post('/saveuser', [UserAccess::class, 'store'])->name('saveuser'); 
+    Route::get('/deleteuser/{id}', [UserAccess::class, 'destroy']);
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

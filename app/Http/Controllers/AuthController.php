@@ -18,7 +18,7 @@ class AuthController extends Controller
    public function loginaction(Request $request)
     {
         // dd($request);
-        
+
         $request->validate([
             'email' => 'required',
             'password' => 'required'
@@ -27,6 +27,8 @@ class AuthController extends Controller
         $ceklogin = $request->only('email', 'password');
         
         if (Auth::attempt($ceklogin)) {
+            $user = User::where('email', $request->email)->where('active', 'Y')->first();
+            Session::put('user', $user->name);
             return redirect()->intended('dashboard')->withSuccess('Signed in');
         }
         
