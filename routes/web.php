@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserAccess;
+use App\Http\Controllers\GroupAccess;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,5 +35,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/updateuser', [UserAccess::class, 'update'])->name('updateuser');   
     Route::post('/saveuser', [UserAccess::class, 'store'])->name('saveuser'); 
     Route::get('/deleteuser/{id}', [UserAccess::class, 'destroy']);
+
+    Route::get('/groupaccess', [GroupAccess::class, 'index'])->name('groupaccess');
+    Route::get('/datatablegroup', [GroupAccess::class, 'datatable'])->name('datatablegroup');
+    Route::post('/editgroup', [GroupAccess::class, 'edit'])->name('editgroup');
+    Route::post('/updategroup', [GroupAccess::class, 'update'])->name('updategroup');   
+    Route::post('/savegroup', [GroupAccess::class, 'store'])->name('savegroup'); 
+    Route::get('/deletegroup/{id}', [GroupAccess::class, 'destroy']);
+    
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

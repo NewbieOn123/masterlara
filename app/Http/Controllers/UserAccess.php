@@ -39,9 +39,9 @@ class UserAccess extends Controller
             ->addColumn('action', function ($data) {
                 $button = '';
 
-                    $button .= '<a href="#" data-tooltip="tooltip" data-id="'.$data->id.'" id="edituser" title="Edit Data"><i class="fa fa-edit fa-lg text-orange actiona"></i></a>';
+                    $button .= '<a href="#" data-tooltip="tooltip" data-id="'.$data->id.'" id="edituser" title="Edit Data" class="btn btn-icon btn-warning btn-sm"><i class="fa fa-edit"></i></a>';
                     $button .= '&nbsp;';
-                    $button .= '<a href="#" data-id="'.$data->id.'" id="deleteuser" data-tooltip="tooltip" title="Delete Data"><i class="fa fa-trash fa-lg text-red actiona"></i></a>';
+                    $button .= '<a href="#" data-id="'.$data->id.'" id="deleteuser" data-tooltip="tooltip" title="Delete Data" class="btn btn-icon btn-danger btn-sm"><i class="fa fa-trash text-red actiona"></i></a>';
                     // $button .= '&nbsp;';
                     // $button .= '<a href="#" data-id="'.$data->id.'" id="detailuser" data-tooltip="tooltip" title="Delete Data"><i class="fa fa-info-circle fa-lg text-blue actiona"></i></a>';
                 
