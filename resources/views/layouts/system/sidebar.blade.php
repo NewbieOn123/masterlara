@@ -19,6 +19,7 @@
                 <ul class="dropdown-menu">
                     <li><a class="nav-link" href="{{ route('useraccess') }}">User Access</a></li>
                     <li><a class="nav-link" href="{{ route('groupaccess') }}">Group Access</a></li>
+                    <li><a class="nav-link" href="{{ route('menuaccess') }}">Menu</a></li>
                 </ul>
             </li>
             <li class="nav-item">

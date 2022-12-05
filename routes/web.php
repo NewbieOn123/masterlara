@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserAccess;
 use App\Http\Controllers\GroupAccess;
+use App\Http\Controllers\MenuAccess;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +43,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/updategroup', [GroupAccess::class, 'update'])->name('updategroup');   
     Route::post('/savegroup', [GroupAccess::class, 'store'])->name('savegroup'); 
     Route::get('/deletegroup/{id}', [GroupAccess::class, 'destroy']);
-    
+
+    Route::get('/menuaccess', [MenuAccess::class, 'index'])->name('menuaccess');
+    Route::get('/datatablemenu', [MenuAccess::class, 'showdatatable'])->name('datatablemenu');
+    Route::post('/editmenu', [MenuAccess::class, 'edit'])->name('editmenu');
+    Route::post('/updatemenu', [MenuAccess::class, 'update'])->name('updatemenu');   
+    Route::post('/savemenu', [MenuAccess::class, 'store'])->name('savemenu'); 
+    Route::get('/deletemenu/{id}', [MenuAccess::class, 'destroy']);
+
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
