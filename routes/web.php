@@ -31,6 +31,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/useraccess', [UserAccess::class, 'index'])->name('useraccess');
+    Route::post('/getgroupaccess', [UserAccess::class, 'getgroupaccess'])->name('getgroupakses');
     Route::get('/datatableuser', [UserAccess::class, 'create'])->name('datatableuser');
     Route::post('/edituser', [UserAccess::class, 'edit'])->name('edituser');
     Route::post('/updateuser', [UserAccess::class, 'update'])->name('updateuser');   

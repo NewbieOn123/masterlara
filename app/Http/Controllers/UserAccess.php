@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Hash;
 use App\Models\User;
+use App\Models\model_groupaccess;
 
 class UserAccess extends Controller
 {
@@ -26,7 +27,7 @@ class UserAccess extends Controller
      */
     public function create()
     {
-        $data = User::where('active', 'Y')->get();
+        $data = User::join('group_access', 'group_access.id_groupaccess', 'users.role_access_group')->where('group_access.aktif', 'Y')->where('users.active', 'Y')->get();
 // dd($data);
         return Datatables::of($data)
             ->addIndexColumn()
@@ -35,6 +36,9 @@ class UserAccess extends Controller
             })
             ->addColumn('emailuser', function ($data) {
                 return  $data->email;
+            })
+            ->addColumn('groupakses', function ($data) {
+                return  $data->nama_groupaccess;
             })
             ->addColumn('action', function ($data) {
                 $button = '';
@@ -66,29 +70,30 @@ class UserAccess extends Controller
 
         $cekname = User::where('name', $request->nameuser)->first();
         if ($cekname) {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Name is available, please check again'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Nama Sudah Tersedia, Silahkan Cek Kembali'];
             return response()->json($status, 200);
         }
 
         $cekemail = User::where('email', $request->emailuser)->first();
         if ($cekemail) {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Email is available, please check again'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Email Sudah Tersedia, Silahkan Cek Kembali'];
             return response()->json($status, 200);
         }
 
         $insert = User::insert([
         	'name' => $request->nameuser,
         	'email' => $request->emailuser,
+            'role_access_group' => $request->groupakses,
         	'password' => $pass,
         	'active' => 'Y',
         	'created_at' => date("Y-m-d H:i:s")
         ]);
 
         if ($insert) {
-            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Successfully Saved'];
+            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Berhasil Disimpan'];
             return response()->json($status, 200);
         } else {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Failed Saved'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagal Disimpan'];
             return response()->json($status, 200);
         }
     }
@@ -99,9 +104,22 @@ class UserAccess extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function getgroupaccess(Request $request)
     {
-        //
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: *");
+
+        if (!$request->ajax()) return;
+        $po = model_groupaccess::selectRaw(' id_groupaccess, nama_groupaccess');
+
+        if ($request->has('q')) {
+            $search = $request->q;
+            $po = $po->whereRaw(' (nama_groupaccess like "%' . $search . '%") ');
+        }
+
+        $po = $po->where('aktif', 'Y')->orderby('nama_groupaccess', 'asc')->paginate(10, $request->page);
+        // dd($po);
+        return response()->json($po);
     }
 
     /**
@@ -114,8 +132,8 @@ class UserAccess extends Controller
     {
         // dd($request);
 
-        $edidata = User::where('id', $request->id)->first();
-
+        $edidata = User::join('group_access', 'group_access.id_groupaccess', 'users.role_access_group')->where('users.id', $request->id)->where('users.active', 'Y')->where('group_access.aktif', 'Y')->first();
+        
         return response()->json(['status' => 200, 'data' => $edidata, 'message' => 'Berhasil']);
     }
 
@@ -132,28 +150,29 @@ class UserAccess extends Controller
 
         $cekname = User::where('id', '!=', $request->id)->where('name', $request->nameuser)->first();
         if ($cekname) {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Name is available, please check again'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Nama Sudah Tersedia, Silahkan Cek Kembali'];
             return response()->json($status, 200);
         }
 
         $cekemail = User::where('id', '!=', $request->id)->where('email', $request->emailuser)->first();
         if ($cekemail) {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Email is available, please check again'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'User Email Sudah Tersedia, Silahkan Cek Kembali'];
             return response()->json($status, 200);
         }
 
         $update = User::where('id', $request->id)->update([
         	'name' => $request->nameuser,
         	'email' => $request->emailuser,
+            'role_access_group' => $request->groupakses,
         	'active' => 'Y',
         	'updated_at' => date("Y-m-d H:i:s")
         ]);
 
         if ($update) {
-            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Successfully Updated'];
+            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Berhasil Diubah'];
             return response()->json($status, 200);
         } else {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Failed Updated'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagal Diubah'];
             return response()->json($status, 200);
         }
     }
@@ -173,10 +192,10 @@ class UserAccess extends Controller
         ]);
 
         if ($delete) {
-            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Successfully Deleted'];
+            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Berhasil Dihapus'];
             return response()->json($status, 200);
         } else {
-            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Failed Deleted'];
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagal Dihapus'];
             return response()->json($status, 200);
         }
     }

@@ -24,6 +24,9 @@
     <!-- Sweet Alert2 -->
     <link rel="stylesheet" href="{{ asset('assets/sweetalert2-theme/bootstrap-4.min.css') }}">
 
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}">
+
     @yield('css')
 </head>
 
@@ -71,6 +74,13 @@
     <!-- SweetAlert2 -->
     <script src="{{ asset('assets/sweetalert2/sweetalert2.min.js') }}"></script>
 
+    <!-- Select2 -->
+    <script src="{{ asset('assets/js/select2.full.min.js') }}"></script>
+
+    <script>
+        //Initialize Select2 Elements
+        $('.select2').select2()
+    </script>
     @yield('script')
 </body>
 
