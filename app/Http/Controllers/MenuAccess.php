@@ -68,7 +68,7 @@ class MenuAccess extends Controller
      */
     public function showdatatable()
     {
-        $data = model_menuaccess::where('aktif', 'Y')->get();
+        $data = model_menuaccess::get();
 // dd($data);
         return Datatables::of($data)
             ->addIndexColumn()
@@ -76,20 +76,31 @@ class MenuAccess extends Controller
                 return  $data->id_menu;
             })
             ->addColumn('namamenu', function ($data) {
-                return  $data->nama_menu;
+                if ($data->aktif == 'Y') {
+                   $stat = '<i class="fas fa-check-circle text-success"></i>';
+                } else {
+                   $stat = '<i class="fas fa-times-circle text-danger"></i>';
+                }
+                
+                return  $data->nama_menu . ' ' . $stat;
             })
             ->addColumn('action', function ($data) {
                 $button = '';
 
                     $button .= '<a href="#" data-tooltip="tooltip" data-id="'.$data->id_menu.'" id="editmenu" title="Edit Data" class="btn btn-icon btn-warning btn-sm"><i class="fa fa-edit"></i></a>';
                     $button .= '&nbsp;';
-                    $button .= '<a href="#" data-id="'.$data->id_menu.'" id="deletemenu" data-tooltip="tooltip" title="Delete Data" class="btn btn-icon btn-danger btn-sm"><i class="fa fa-trash text-red actiona"></i></a>';
+
+                    if ($data->aktif == 'Y') {
+                        $button .= '<a href="#" data-id="'.$data->id_menu.'" id="deletemenu" data-tooltip="tooltip" title="Delete Data" class="btn btn-icon btn-danger btn-sm"><i class="fa fa-trash text-red actiona"></i></a>';
+                    } else {
+                        $button .= '<a href="#" data-id="'.$data->id_menu.'" id="activemenu" data-tooltip="tooltip" title="Active Data" class="btn btn-icon btn-success btn-sm"><i class="fa fa-plus text-red actiona"></i></a>';
+                    }
                     // $button .= '&nbsp;';
                     // $button .= '<a href="#" data-id="'.$data->id.'" id="detailuser" data-tooltip="tooltip" title="Delete Data"><i class="fa fa-info-circle fa-lg text-blue actiona"></i></a>';
                 
                 return $button;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['namamenu', 'action'])
             ->make(true);
     }
 
@@ -153,6 +164,21 @@ class MenuAccess extends Controller
             return response()->json($status, 200);
         } else {
             $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagal Dihapus'];
+            return response()->json($status, 200);
+        }
+    }
+
+    public function active($id)
+    {
+        $delete = model_menuaccess::where('id_menu', $id)->update([
+            'aktif' => 'Y'
+        ]);
+
+        if ($delete) {
+            $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Berhasil Diaktifkan'];
+            return response()->json($status, 200);
+        } else {
+            $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagal Diaktifkan'];
             return response()->json($status, 200);
         }
     }

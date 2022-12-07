@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/updatemenu', [MenuAccess::class, 'update'])->name('updatemenu');   
     Route::post('/savemenu', [MenuAccess::class, 'store'])->name('savemenu'); 
     Route::get('/deletemenu/{id}', [MenuAccess::class, 'destroy']);
+    Route::get('/activemenu/{id}', [MenuAccess::class, 'active']);
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

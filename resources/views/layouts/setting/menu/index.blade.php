@@ -193,12 +193,57 @@
 
     $('body').on('click', '#deletemenu', function() {
         let idku = $(this).attr('data-id');
-        let url = '{!! url('deletegroup') !!}' + '/' + idku;
+        let url = '{!! url('deletemenu') !!}' + '/' + idku;
         // url = url.replace('params', idku);
         // console.log('idku :>> ', url);
         Swal.fire({
             title: 'Validasi Hapus Data!',
             text: 'Apakah Anda Yakin Untuk Menghapus Data Ini ?',
+            type: 'question',
+            showConfirmButton: true,
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "JSON",
+                    success: function(response) {
+                        Swal.fire({
+                            title: response.message,
+	                        type: (response.status != 'error') ? 'success' : 'error',
+	                        toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 2000,
+                        }).then(() => {
+                            $('#datatable').DataTable().ajax.reload();
+                            // (response.status == 'success') ? window
+                            //     .location
+                            //     .replace("{{ route('useraccess') }}"):
+                            //     ''
+                        })
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Unsuccessfully Saved Data',
+                            text: 'Check Your Data',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                });
+                return false;
+            }
+        })
+    });
+
+    $('body').on('click', '#activemenu', function() {
+        let idku = $(this).attr('data-id');
+        let url = '{!! url('activemenu') !!}' + '/' + idku;
+        Swal.fire({
+            title: 'Validasi Aktif Data!',
+            text: 'Apakah Anda Yakin Untuk Mengaktifkan Data Ini ?',
             type: 'question',
             showConfirmButton: true,
             showCancelButton: true,
