@@ -43,4 +43,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function group_access(){
+        return $this->belongsTo('App\Models\model_groupaccess', 'role_access_group');
+    }
 }

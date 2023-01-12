@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/groupaccess', [GroupAccess::class, 'index'])->name('groupaccess');
     Route::get('/datatablegroup', [GroupAccess::class, 'datatable'])->name('datatablegroup');
+    Route::post('/getgroupmenu', [GroupAccess::class, 'getgroupmenu'])->name('getgroupmenu');
     Route::post('/editgroup', [GroupAccess::class, 'edit'])->name('editgroup');
     Route::post('/updategroup', [GroupAccess::class, 'update'])->name('updategroup');   
     Route::post('/savegroup', [GroupAccess::class, 'store'])->name('savegroup'); 

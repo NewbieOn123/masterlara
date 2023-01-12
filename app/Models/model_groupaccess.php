@@ -12,4 +12,12 @@ class model_groupaccess extends Model
     protected $table = 'group_access';
     protected $primaryKey = 'id_groupaccess';
     protected $guraded = [];
+
+    public function role_access(){
+        return $this->hasMany('App\Models\model_roleaccess', 'idgroupaccess');
+    }
+
+    public function users(){
+        return $this->hasMany('App\Models\User', 'role_access_group');
+    }
 }
