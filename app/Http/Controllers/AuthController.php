@@ -28,11 +28,18 @@ class AuthController extends Controller
         
         if (Auth::attempt($ceklogin)) {
             $user = User::where('email', $request->email)->where('active', 'Y')->first();
-            Session::put('user', $user->name);
-            return redirect()->intended('dashboard')->withSuccess('Signed in');
-        }
-        
-        return redirect("login")->withSuccess('Login details are not valid');
+            $privilege = [
+                'nama' => $user->name,
+                'email' => $user->email,
+                'role_access_group' => $user->role_access_group
+            ];
+            // dd($privilege['nama']);
+            Session::put('user', $privilege);
+            return redirect('dashboard')->with('alert', 'sweetAlert("success", "Berhasil Masuk", "Selamat Datang ' . $privilege['nama'] . ' ")');
+        } else {
+            // Session::flash('alert', 'sweetAlert("error", "Gagal", "Salah")');
+            return redirect('viewlogin')->with('alert', 'sweetAlert("error", "Gagal Masuk", "Nama Pengguna atau Kata Sandi Salah")');
+        }        
     }
 
     public function viewregister()
@@ -68,6 +75,10 @@ class AuthController extends Controller
         // return redirect('layouts.auth.login')->withSuccess('You Success Logout');
 
         // return view('layouts.auth.login');
+    }
+
+    public function choosemenu(){
+
     }
 
 }

@@ -78,6 +78,18 @@
     <script src="{{ asset('assets/js/select2.full.min.js') }}"></script>
 
     <script>
+        @if (Session::has('alert'))
+            {!! Session::get('alert') !!}
+        @endif
+
+        function sweetAlert(alert, desc, text) {
+            Swal.fire({
+                type: alert,
+                title: desc,
+                text: text,
+            });
+        }
+
         //Initialize Select2 Elements
         $('.select2').select2()
     </script>

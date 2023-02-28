@@ -14,6 +14,9 @@
   <!-- Template CSS -->
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
+
+   <!-- Sweet Alert2 -->
+  <link rel="stylesheet" href="{{ asset('assets/sweetalert2-theme/bootstrap-4.min.css') }}">
 </head>
 
 <body>
@@ -50,5 +53,23 @@
   <script src="{{ asset('assets/js/custom.js') }}"></script>
 
   <!-- Page Specific JS File -->
+
+  <!-- SweetAlert2 -->
+  <script src="{{ asset('assets/sweetalert2/sweetalert2.min.js') }}"></script>
+
+  <script>
+        @if (Session::has('alert'))
+            {!! Session::get('alert') !!}
+        @endif
+
+        function sweetAlert(alert, desc, text) {
+            Swal.fire({
+                type: alert,
+                title: desc,
+                text: text,
+            });
+        }
+        
+    </script>
 </body>
 </html>
