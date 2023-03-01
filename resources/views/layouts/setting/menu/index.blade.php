@@ -145,14 +145,14 @@
         let id = $('#idku').val();
         let namamenu = $('#namamenu').val();
         
-        if (namamenu == null || namamenu == '') {
-            Swal.fire({
-                title: 'Informasi',
-                text: ' Nama Menu Tidak Boleh Kosong!!',
-                type: 'warning'
-            });
-            return;
-        } else {
+        // if (namamenu == null || namamenu == '') {
+        //     Swal.fire({
+        //         title: 'Informasi',
+        //         text: ' Nama Menu Tidak Boleh Kosong!!',
+        //         type: 'warning'
+        //     });
+        //     return;
+        // } else {
             $.ajax({
                 type: "post",
                 url: (id == '') ? "{{ route('savemenu') }}" :
@@ -188,7 +188,7 @@
                     return;
                 }
             });
-        }
+        // }
     });
 
     $('body').on('click', '#deletemenu', function() {

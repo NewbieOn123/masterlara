@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Models\model_menuaccess;
@@ -38,6 +39,11 @@ class MenuAccess extends Controller
     {
         // dd($request);
 
+        if ($request->namamenu == null || $request->namamenu == '') {
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Nama Menu Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+        
         $ceknama = model_menuaccess::where('nama_menu', $request->namamenu)->first();
         if ($ceknama) {
             $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Nama Menu Sudah Tersedia, Silahkan Periksa Kembali'];
@@ -45,9 +51,10 @@ class MenuAccess extends Controller
         }
 
         $insert = model_menuaccess::insert([
-            'nama_menu' => $request->namamenu,
-            'aktif' => 'Y',
-            'created_at' => date("Y-m-d H:i:s")
+            'nama_menu'  => $request->namamenu,
+            'aktif'      => 'Y',
+            'created_at' => date("Y-m-d H:i:s"),
+            'created_by' => Session::get('user')['email']
         ]);
 
         if ($insert) {
@@ -69,7 +76,7 @@ class MenuAccess extends Controller
     public function showdatatable()
     {
         $data = model_menuaccess::get();
-// dd($data);
+
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('kodemenu', function ($data) {
@@ -126,6 +133,11 @@ class MenuAccess extends Controller
      */
     public function update(Request $request)
     {
+        if ($request->namamenu == null || $request->namamenu == '') {
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Nama Menu Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+        
         $cekname = model_menuaccess::where('id_menu', '!=', $request->id)->where('nama_menu', $request->namamenu)->first();
         if ($cekname) {
             $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Nama Group Sudah Tersedia, Silahkan Periksa Kembali'];
@@ -133,9 +145,10 @@ class MenuAccess extends Controller
         }
 
         $update = model_menuaccess::where('id_menu', $request->id)->update([
-            'nama_menu' => $request->namamenu,
-            'aktif' => 'Y',
-            'updated_at' => date("Y-m-d H:i:s")
+            'nama_menu'  => $request->namamenu,
+            'aktif'      => 'Y',
+            'updated_at' => date("Y-m-d H:i:s"),
+            'updated_by' => Session::get('user')['email']
         ]);
 
         if ($update) {
@@ -156,7 +169,8 @@ class MenuAccess extends Controller
     public function destroy($id)
     {
         $delete = model_menuaccess::where('id_menu', $id)->update([
-            'aktif' => 'N'
+            'aktif'      => 'N',
+            'updated_by' => Session::get('user')['email']
         ]);
 
         if ($delete) {
@@ -171,7 +185,8 @@ class MenuAccess extends Controller
     public function active($id)
     {
         $delete = model_menuaccess::where('id_menu', $id)->update([
-            'aktif' => 'Y'
+            'aktif'      => 'Y',
+            'updated_by' => Session::get('user')['email']
         ]);
 
         if ($delete) {
