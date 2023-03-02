@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Session;
 use Yajra\Datatables\Datatables;
 use App\Models\model_groupaccess;
 use App\Models\model_menuaccess;
@@ -66,6 +67,19 @@ class GroupAccess extends Controller
     {
         // dd($request);
         DB::beginTransaction();
+
+        if ($request->namagroup == null || $request->namagroup == '') {
+            DB::rollback();
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Nama Group Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+
+        if ($request->groupmenu == null || $request->groupmenu == '') {
+            DB::rollback();
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Group Menu Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+
         $ceknama = model_groupaccess::where('nama_groupaccess', $request->namagroup)->where('aktif', 'Y')->first();
         if ($ceknama) {
             DB::rollback();
@@ -76,7 +90,8 @@ class GroupAccess extends Controller
         $insert = model_groupaccess::insert([
             'nama_groupaccess' => $request->namagroup,
             'aktif' => 'Y',
-            'created_at' => date("Y-m-d H:i:s")
+            'created_at' => date("Y-m-d H:i:s"),
+            'created_by' => Session::get('user')['email']
         ]);
 
         $getidgroupaccess = model_groupaccess::latest('id_groupaccess')->first();
@@ -85,7 +100,8 @@ class GroupAccess extends Controller
                 'idmenu' => $val,
                 'idgroupaccess' => $getidgroupaccess->id_groupaccess,
                 'aktif' => 'Y',
-                'created_at' => date("Y-m-d H:i:s")
+                'created_at' => date("Y-m-d H:i:s"),
+                'created_by' => Session::get('user')['email']
             ]);
 
             if ($save) {
@@ -140,7 +156,7 @@ class GroupAccess extends Controller
     {
         $edidata = model_groupaccess::where('id_groupaccess', $request->id)->first();
         $datarole = model_roleaccess::join('menu', 'menu.id_menu', 'role_access.idmenu')->where('idgroupaccess', $request->id)->get();
-         $po = model_menuaccess::selectRaw(' id_menu, nama_menu');
+        $po = model_menuaccess::selectRaw(' id_menu, nama_menu');
         $datamenu =   $po->where('aktif', 'Y')->orderby('nama_menu', 'asc')->get();
 
         
@@ -162,8 +178,23 @@ class GroupAccess extends Controller
      */
     public function update(Request $request)
     {
+        // dd($request);
+        DB::beginTransaction();
+         if ($request->namagroup == null || $request->namagroup == '') {
+            DB::rollback();
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Nama Group Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+
+        if ($request->groupmenu == null || $request->groupmenu == '') {
+            DB::rollback();
+            $status = ['title' => 'Gagal!', 'status' => 'error', 'message' => 'Group Menu Tidak Boleh Kosong!!'];
+            return response()->json($status, 200);
+        }
+
         $cekname = model_groupaccess::where('id_groupaccess', '!=', $request->id)->where('nama_groupaccess', $request->namagroup)->first();
         if ($cekname) {
+            DB::rollback();
             $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Nama Group Sudah Tersedia, Silahkan Periksa Kembali'];
             return response()->json($status, 200);
         }
@@ -171,13 +202,35 @@ class GroupAccess extends Controller
         $update = model_groupaccess::where('id_groupaccess', $request->id)->update([
             'nama_groupaccess' => $request->namagroup,
             'aktif' => 'Y',
-            'updated_at' => date("Y-m-d H:i:s")
+            'updated_at' => date("Y-m-d H:i:s"),
+            'updated_by' => Session::get('user')['email']
         ]);
 
-        if ($update) {
+        //masih blm bisa update or create ketika groupmenu diganti atau ditambah (PR)
+        foreach ($request->groupmenu as $key => $val) {
+            $save = model_roleaccess::updateOrCreate([
+                'idgroupaccess' => $request->id],
+                [
+                'idmenu' => $val,
+                'idgroupaccess' => $request->id,
+                'aktif' => 'Y',
+                'updated_at' => date("Y-m-d H:i:s"),
+                'updated_by' => Session::get('user')['email']
+                ]);
+
+            if ($save) {
+                $sukses[] = "OK";
+            } else {
+                $gagal[] = "OK";
+            }
+        }
+
+        if ($update  && empty($gagal)) {
+            DB::commit();
             $status = ['title' => 'Success', 'status' => 'success', 'message' => 'Data Berhasil Diubah'];
             return response()->json($status, 200);
         } else {
+            DB::rollback();
             $status = ['title' => 'Failed!', 'status' => 'error', 'message' => 'Data Gagas Diubah'];
             return response()->json($status, 200);
         }
@@ -192,7 +245,9 @@ class GroupAccess extends Controller
     public function destroy($id)
     {
         $delete = model_groupaccess::where('id_groupaccess', $id)->update([
-            'aktif' => 'N'
+            'aktif' => 'N',
+            'updated_at' => date("Y-m-d H:i:s"),
+            'updated_by' => Session::get('user')['email']
         ]);
 
         if ($delete) {

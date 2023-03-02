@@ -11,7 +11,7 @@ class model_roleaccess extends Model
 
     protected $table = 'role_access';
     protected $primaryKey = 'id_roleaccess';
-    protected $guraded = [];
+    protected $guarded = [];
 
     public function group_access(){
         return $this->belongsTo('App\Models\model_groupaccess', 'idgroupaccess');

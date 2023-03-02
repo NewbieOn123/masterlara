@@ -269,9 +269,6 @@
             }
             console.log('dataroleeee :>> ', idrole);
             $('#groupmenu').select2().val(idrole).trigger('change');
-
-           
-
         })
     });
 
@@ -280,14 +277,14 @@
         let namagroup = $('#namegroup').val();
         let groupmenu = $('#groupmenu').val();
 
-        if (namagroup == null || namagroup == '') {
-            Swal.fire({
-                title: 'Informasi',
-                text: ' Nama Group Tidak Boleh Kosong!!',
-                type: 'warning'
-            });
-            return;
-        } else {
+        // if (namagroup == null || namagroup == '') {
+        //     Swal.fire({
+        //         title: 'Informasi',
+        //         text: ' Nama Group Tidak Boleh Kosong!!',
+        //         type: 'warning'
+        //     });
+        //     return;
+        // } else {
             $.ajax({
                 type: "post",
                 url: (id == '') ? "{{ route('savegroup') }}" :
@@ -330,7 +327,7 @@
                     return;
                 }
             });
-        }
+        // }
     });
 
     $('body').on('click', '#deletegroup', function() {
@@ -352,10 +349,12 @@
                     dataType: "JSON",
                     success: function(response) {
                         Swal.fire({
-                            title: response.title,
-                            text: response.message,
-                            type: (response.status != 'error') ?
-                                'success' : 'error'
+                            title: response.message,
+                            type: (response.status != 'error') ? 'success' : 'error',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000,
                         }).then(() => {
                             $('#datatable').DataTable().ajax.reload();
                             // (response.status == 'success') ? window
